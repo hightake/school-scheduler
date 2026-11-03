@@ -112,7 +112,9 @@ details summary { cursor: pointer; }
 .mp-tools { display: flex; gap: 6px; align-items: center; }
 .mp-tools input { flex: 1; }
 .win-row { display: flex; gap: 6px; align-items: center; margin: 4px 0; flex-wrap: wrap; }
-.win-row input[type=time] { width: 112px; }
+.form-grid .win-row select, .form-grid .win-row input { width: auto !important; }
+.form-grid .win-row input[type=time] { width: 112px !important; }
+.form-grid .win-row input[data-w=reason] { width: 180px !important; }
 
 /* לוח שיבוץ */
 .board-wrap { overflow-x: auto; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); }
