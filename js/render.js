@@ -11,12 +11,12 @@
     const big = kind === 'student';
     const parts = [];
     if (it.timeDiffers) parts.push('<div class="tt-time">' + esc(E.fmtRange(it.start, it.end)) + '</div>');
-    parts.push('<div class="tt-title">' + (opts.icons !== false && it.icon ? '<span class="tt-ic">' + esc(it.icon) + '</span> ' : '') + esc(it.title) +
+    parts.push('<div class="tt-title">' + (opts.icons === true && it.icon ? '<span class="tt-ic">' + esc(it.icon) + '</span> ' : '') + esc(it.title) +
       (it.pattern ? ' <span class="tt-badge">שבוע ' + esc(it.pattern) + '</span>' : '') +
       (it.oneOff ? ' <span class="tt-badge tt-once">חד-פעמי</span>' : '') + (it.changed ? ' <span class="tt-badge tt-once">שונה</span>' : '') + '</div>');
     if (it.sub && opts.staff !== false) parts.push('<div class="tt-sub">' + esc(it.sub) + '</div>');
     if (it.names) parts.push('<div class="tt-names">' + esc(it.names) + '</div>');
-    if (it.room && opts.rooms) parts.push('<div class="tt-sub">📍 ' + esc(it.room) + '</div>');
+    if (it.room && opts.rooms) parts.push('<div class="tt-sub">חדר: ' + esc(it.room) + '</div>');
     return '<div class="tt-item' + (big ? ' tt-big' : '') + (it.highlight ? ' tt-hl' : '') + '" data-session="' + esc(it.sessionId) + '" style="--c:' + esc(opts.color === false ? '#fff' : it.color) + '">' + parts.join('') + '</div>';
   }
 
@@ -61,47 +61,49 @@
         h += '<header class="tt-head">' + (hd.top ? '<div class="tt-top">' + esc(hd.top) + '</div>' : '') +
           '<h2>~ ' + esc(hd.title) + ' ~</h2><div class="tt-subh">' + esc(hd.sub) + '</div></header>';
       }
-      h += pageHtml(view, p, opts) + '</section>';
+      h += pageHtml(view, p, opts) + '<footer class="tt-foot">עודכן ' + new Date().toLocaleDateString('he-IL') + '</footer></section>';
     });
     return h;
   }
 
+  const FONT_CSS = [400, 600, 700].map(w => '@font-face{font-family:"Assistant";font-weight:' + w + ';src:url(css/fonts/assistant-hebrew-' + w + '-normal.woff2) format("woff2");unicode-range:U+0590-05FF,U+FB1D-FB4F}' +
+    '@font-face{font-family:"Assistant";font-weight:' + w + ';src:url(css/fonts/assistant-latin-' + w + '-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F}').join('');
   const PRINT_CSS = `
-  @page { size: A4 landscape; margin: 10mm; }
-  body { font-family: "Segoe UI", Arial, "Noto Sans Hebrew", sans-serif; direction: rtl; color:#111; margin:0; background:#fff; }
-  .tt-page { page-break-after: always; break-after: page; padding: 4mm 0; }
+  @page { size: A4 landscape; margin: 9mm 10mm; }
+  body { font-family: "Assistant", "Segoe UI", Arial, sans-serif; direction: rtl; color:#1a1a1a; margin:0; background:#fff; }
+  .tt-page { page-break-after: always; break-after: page; padding: 2mm 0; position: relative; }
   .tt-page:last-child { page-break-after: auto; break-after: auto; }
-  .tt-head { text-align:center; margin-bottom:6px; }
-  .tt-head h2 { margin: 2px 0; font-size: 18pt; }
+  .tt-head { text-align:center; margin-bottom:7px; padding-bottom:5px; border-bottom: 1.5px solid #1a1a1a; }
+  .tt-head h2 { margin: 0 0 1px; font-size: 17pt; font-weight:700; }
   .tt-top { text-align:right; font-size:9pt; }
   .tt-subh { font-size: 10pt; color:#444; }
   table.tt { width:100%; border-collapse: collapse; table-layout: fixed; }
-  table.tt th, table.tt td { border: 1px solid #555; padding: 3px 4px; vertical-align: top; font-size: 9.5pt; }
-  table.tt thead th { background:#e5e7eb; font-size: 11pt; }
-  .tt-hcol { width: 78px; background:#f3f4f6; font-weight:600; white-space:nowrap; }
-  .tt-break td, .tt-break th { background:#f8fafc; }
-  .tt-item { background: var(--c); border-radius:4px; padding:2px 4px; margin:2px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .tt-item + .tt-item { border-top: 1px dashed #999; }
-  .tt-hl { outline: 1px solid #b45309; }
+  table.tt th, table.tt td { border: 0.75pt solid #6b6b6b; padding: 3px 4px; vertical-align: top; font-size: 9.5pt; }
+  table.tt thead th { background:#e9e9e9; font-size: 11pt; font-weight:700; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .tt-hcol { width: 76px; background:#f4f4f4; font-weight:700; white-space:nowrap; font-variant-numeric: tabular-nums; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .tt-break td, .tt-break th { background:#f7f7f7; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .tt-item { background: var(--c); padding:1px 4px; margin:1px 0; border-right: 2.5px solid rgba(0,0,0,.28); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .tt-hl { border-right-color: #9a6a1c; }
   .tt-title { font-weight:700; }
   .tt-big .tt-title { font-size: 12pt; }
-  .tt-ic { font-size: 1.1em; }
-  .tt-time { display:inline-block; background:#fde047; font-weight:700; padding:0 3px; border-radius:2px; font-size:.9em; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .tt-sub { font-size: .88em; color:#333; }
-  .tt-names { font-size: .88em; color:#1e3a8a; }
-  .tt-badge { font-size:.75em; background:#fff; border:1px solid #888; border-radius:8px; padding:0 4px; font-weight:400; }
-  .tt-once { border-color:#b91c1c; color:#b91c1c; }
-  .tt-routine { text-align:center; color:#555; font-weight:600; }
-  .tt-holiday { text-align:center; vertical-align:middle !important; background:#fef2f2; font-weight:700; color:#991b1b; }
+  .tt-ic { font-size: 1.05em; }
+  .tt-time { display:inline-block; background:#fdeb8a; font-weight:700; padding:0 3px; font-size:.9em; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .tt-sub { font-size: .9em; color:#333; }
+  .tt-names { font-size: .9em; color:#1f3f60; }
+  .tt-badge { font-size:.75em; border:0.75pt solid #777; padding:0 3px; font-weight:400; }
+  .tt-once { border-color:#8b1e1e; color:#8b1e1e; }
+  .tt-routine { text-align:center; color:#444; font-weight:600; }
+  .tt-holiday { text-align:center; vertical-align:middle !important; background:#f6f0f0; font-weight:700; color:#7a1d1d; }
   .tt-wk { font-size:.75em; font-weight:400; }
   .tt-sec { margin: 10px 0 4px; font-size: 12pt; }
   .tt-list td, .tt-list th { font-size: 10.5pt; }
   .tt-empty { color:#666; }
   .tt-student td { font-size: 11pt; }
+  .tt-foot { text-align:left; font-size: 7.5pt; color:#777; margin-top: 3px; }
   `;
 
   function fullDoc(title, body, extraCss) {
-    return '<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>' + esc(title) + '</title><style>' + PRINT_CSS + (extraCss || '') + '</style></head><body>' + body + '</body></html>';
+    return '<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>' + esc(title) + '</title><base href="' + esc(location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '')) + '"><style>' + FONT_CSS + PRINT_CSS + (extraCss || '') + '</style></head><body>' + body + '</body></html>';
   }
 
   function printViews(views, opts) {

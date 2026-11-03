@@ -17,15 +17,15 @@
   const DAY_SHORT = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
 
   const TYPES = {
-    lesson:    { label: 'שיעור כיתתי',             layer: 0, color: '#dbeafe', icon: '📘' },
-    routine:   { label: 'שגרה (תפילה/ארוחה/הפסקה)', layer: 0, color: '#f1f5f9', icon: '🍎', protected: true },
-    inclusion: { label: 'שילוב בכיתה רגילה',        layer: 1, color: '#dcfce7', icon: '🏫' },
-    therapy:   { label: 'טיפול',                    layer: 2, color: '#fef3c7', icon: '💬' },
-    help:      { label: 'עזרה / תגבור פרטני',       layer: 2, color: '#ffedd5', icon: '✏️' },
-    group:     { label: 'חוג / קבוצה',              layer: 2, color: '#fae8ff', icon: '🎯' },
-    guidance:  { label: 'הדרכת צוות',               layer: 2, color: '#e0e7ff', icon: '🧭', staffOnly: true },
-    meeting:   { label: 'ישיבת צוות',               layer: 2, color: '#e2e8f0', icon: '👥', staffOnly: true },
-    other:     { label: 'אחר',                      layer: 2, color: '#f5f5f4', icon: '📌' }
+    lesson:    { label: 'שיעור כיתתי',             layer: 0, color: '#e6edf5', icon: '📘' },
+    routine:   { label: 'שגרה (תפילה/ארוחה/הפסקה)', layer: 0, color: '#f0f1f3', icon: '🍎', protected: true },
+    inclusion: { label: 'שילוב בכיתה רגילה',        layer: 1, color: '#e5f0e8', icon: '🏫' },
+    therapy:   { label: 'טיפול',                    layer: 2, color: '#f8eed8', icon: '💬' },
+    help:      { label: 'עזרה / תגבור פרטני',       layer: 2, color: '#f6e6da', icon: '✏️' },
+    group:     { label: 'חוג / קבוצה',              layer: 2, color: '#eee6f2', icon: '🎯' },
+    guidance:  { label: 'הדרכת צוות',               layer: 2, color: '#e6e8f3', icon: '🧭', staffOnly: true },
+    meeting:   { label: 'ישיבת צוות',               layer: 2, color: '#eaecef', icon: '👥', staffOnly: true },
+    other:     { label: 'אחר',                      layer: 2, color: '#f1f1ef', icon: '📌' }
   };
 
   const ROLES = {

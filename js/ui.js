@@ -177,9 +177,9 @@
     const req = { kind, id, range: range || { mode: 'week' }, options: { showNames: kind !== 'student' } };
     const v = root.Views.build(S(), req);
     const m = modal(v.heading.title, '<div class="tt-preview">' + root.Render.viewHtml(v) + '</div>', [
-      { label: '🖨️ הדפסה / PDF', cls: 'pri', onClick: () => { root.Render.printViews([v]); return false; } },
-      { label: '📗 Excel', onClick: () => { root.Render.excelViews([v]); return false; } },
-      { label: '📘 Word', onClick: () => { root.Render.wordViews([v]); return false; } },
+      { label: 'הדפסה / PDF', cls: 'pri', onClick: () => { root.Render.printViews([v]); return false; } },
+      { label: 'Excel', onClick: () => { root.Render.excelViews([v]); return false; } },
+      { label: 'Word', onClick: () => { root.Render.wordViews([v]); return false; } },
       { label: 'אפשרויות נוספות', onClick: () => { root.App.go('export', { kind, id }); } },
       { label: 'סגירה' }
     ], { wide: true });
@@ -193,7 +193,7 @@
       '<span class="muted small">' + (o.changes ? 'דורש ' + o.changes + ' שינויים' : 'ללא שינויים') + (o.cost ? ' · עלות ' + Math.round(o.cost * 10) / 10 : '') + '</span>' +
       '<button class="sm pri right" data-apply-opt="' + i + '">בצע</button></div>' +
       (o.moves && o.moves.length ? '<div class="moves">' + o.moves.map(mv => '↪ להזיז את "' + esc(mv.title) + '" מ' + esc(slotText(mv.from)) + ' ל' + esc(slotText(mv.to))).join('<br>') + '</div>' : '') +
-      (o.soft && o.soft.length ? '<div class="moves muted">⚠ ' + summarizeSoft(o.soft).map(esc).join(' · ') + '</div>' : '') + '</div>').join('');
+      (o.soft && o.soft.length ? '<div class="moves muted">' + summarizeSoft(o.soft).map(esc).join(' · ') + '</div>' : '') + '</div>').join('');
   }
   /** איחוד הערות: "6 תלמידים יפספסו X" במקום שורה לכל תלמיד */
   function summarizeSoft(soft) {
@@ -230,8 +230,14 @@
     }
   }
 
+  /** נקודת צבע לפי סוג הפעילות */
+  function dot(a) {
+    const c = (a && a.color) || E.typeOf(a).color;
+    return '<i class="dot" style="background:' + esc(c) + '" title="' + esc(E.typeOf(a).label) + '"></i>';
+  }
+
   function hours(min) { return min == null ? '' : (Math.round(min / 6) / 10) + ' ש\''; }
 
   root.UI = { esc, $, $$, S, toast, modal, confirmBox, options, dayOptions, timeInput, multiPick, bindPickers, winsEditor, readForm, daysBoxes,
-    studentItems, staffItems, classItems, nameOf, slotText, openTimetable, optionsList, bindOptions, applyOption, hours, summarizeSoft };
+    studentItems, staffItems, classItems, nameOf, slotText, openTimetable, optionsList, bindOptions, applyOption, hours, summarizeSoft, dot };
 })(window);

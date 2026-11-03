@@ -45,11 +45,11 @@
 
     main.innerHTML = '<h1>לוח שיבוץ</h1><div class="toolbar"><label>תצוגה: <select id="flt">' + filterOpts + '</select></label>' +
       (s.settings.abWeeks ? '<select id="pat">' + options([{ value: 'all', label: 'כל השבועות' }, { value: 'A', label: 'שבוע א' }, { value: 'B', label: 'שבוע ב' }], pat) + '</select>' : '') +
-      '<button class="pri" id="auto">⚡ שיבוץ אוטומטי</button><button id="addS">+ מפגש ידני</button>' +
-      (f.kind ? '<button id="tt">🖨️ מערכת להדפסה</button>' : '') + '<label class="row small"><input type="checkbox" id="dimOthers"' + (mem.dim ? ' checked' : '') + '> הצג גם אחרים (מעומעם)</label></div>' +
-      (conflicts.length ? '<div class="alert bad">⛔ ' + conflicts.length + ' התנגשויות – מסומנות במסגרת אדומה. <a href="#" id="showConf">הצג</a></div>' : '') +
-      (covRel.length ? '<div class="card"><b>ממתינים לשיבוץ:</b> <span class="muted small">(לחיצה = חיפוש מקום עם מינימום שינויים; ניתן גם לגרור ללוח)</span><div class="tray" style="margin-top:6px">' + covRel.map(c => { const a = ctx.act.get(c.activityId); return '<span class="chip warn" draggable="true" data-need="' + c.activityId + '">' + esc(a.icon || E.typeOf(a).icon) + ' ' + esc(c.title) + ' ×' + c.missing + '</span>'; }).join('') + '</div></div>' : '') +
-      '<div class="legend" style="margin-bottom:8px">' + root.Views.legend().map(l => '<span style="background:' + l.color + '">' + l.icon + ' ' + esc(l.label) + '</span>').join('') + '</div>' +
+      '<button class="pri" id="auto">שיבוץ אוטומטי</button><button id="addS">+ מפגש ידני</button>' +
+      (f.kind ? '<button id="tt">מערכת להדפסה</button>' : '') + '<label class="row small"><input type="checkbox" id="dimOthers"' + (mem.dim ? ' checked' : '') + '> הצג גם אחרים (מעומעם)</label></div>' +
+      (conflicts.length ? '<div class="alert bad">' + conflicts.length + ' התנגשויות – מסומנות במסגרת אדומה. <a href="#" id="showConf">הצג</a></div>' : '') +
+      (covRel.length ? '<div class="card"><b>ממתינים לשיבוץ:</b> <span class="muted small">(לחיצה = חיפוש מקום עם מינימום שינויים; ניתן גם לגרור ללוח)</span><div class="tray" style="margin-top:6px">' + covRel.map(c => { const a = ctx.act.get(c.activityId); return '<span class="chip warn" draggable="true" data-need="' + c.activityId + '">' + U.dot(a) + esc(c.title) + ' ×' + c.missing + '</span>'; }).join('') + '</div></div>' : '') +
+      '<div class="legend" style="margin-bottom:8px">' + root.Views.legend().map(l => '<span><i class="dot" style="background:' + l.color + '"></i>' + esc(l.label) + '</span>').join('') + '</div>' +
       '<div class="board-wrap"><div class="board" id="board"></div></div><p class="muted small">טיפ: גררו מפגש כדי להזיז אותו (המערכת תבדוק התנגשויות ותציע פתרון), לחצו על מפגש לעריכה/חלופות, לחצו על משבצת ריקה להוספה.</p>';
 
     $('#flt').onchange = e => { const [k, id] = e.target.value.split(':'); mem.boardFilter = { kind: k || '', id: id || '' }; P.board(main); };
@@ -104,7 +104,7 @@
           const studs = E.studentsOf(ctx, a);
           const who = (a.classIds || []).length ? (a.classIds || []).map(c => (ctx.classes.get(c) || {}).name).join(', ') : studs.slice(0, 4).map(id => E.studentShort(ctx.students.get(id))).join(', ') + (studs.length > 4 ? '…' : '');
           h += '<div class="blk' + (confIds.has(x.id) ? ' conflict' : '') + (x.locked ? ' locked' : '') + (o.on ? '' : ' dim') + '" draggable="' + (!x.locked) + '" data-ses="' + x.id + '" title="' + esc(E.actLabel(ctx, a) + ' ' + E.fmtRange(x.start, x.end) + '\n' + E.staffNames(ctx, a.staffIds) + '\n' + who) + '" style="top:' + ((x.start - t0) * PX) + 'px;height:' + Math.max(16, (x.end - x.start) * PX - 2) + 'px;right:calc(' + (o.lane * 100 / n) + '% + 1px);width:calc(' + (100 / n) + '% - 2px);background:' + esc(a.color || t.color) + '">' +
-            '<b>' + esc(a.icon || t.icon) + ' ' + esc(E.actLabel(ctx, a)) + (x.weekPattern && x.weekPattern !== 'all' ? ' (' + x.weekPattern + ')' : '') + '</b><div class="t">' + E.fmtRange(x.start, x.end) + '</div><div class="t">' + esc(E.staffNames(ctx, a.staffIds)) + '</div><div class="t">' + esc(who) + '</div></div>';
+            '<b>' + esc(E.actLabel(ctx, a)) + (x.weekPattern && x.weekPattern !== 'all' ? ' (' + x.weekPattern + ')' : '') + '</b><div class="t">' + E.fmtRange(x.start, x.end) + '</div><div class="t">' + esc(E.staffNames(ctx, a.staffIds)) + '</div><div class="t">' + esc(who) + '</div></div>';
         }
       }
       h += '</div>';
@@ -177,19 +177,19 @@
     const apply = (o) => Store.change(c.sessionId ? 'הזזת מפגש' : 'שיבוץ מפגש', state => U.applyOption(state, c.activityId, c.sessionId, o));
     if (!ev.hard.length) {
       apply({ day: c.day, start: c.start, end: c.end, moves: [] });
-      toast('✔ ' + E.actLabel(ctx, a) + ' – ' + U.slotText(c) + (ev.soft.length ? ' (⚠ ' + ev.soft.length + ' הערות)' : ''));
+      toast('' + E.actLabel(ctx, a) + ' – ' + U.slotText(c) + (ev.soft.length ? ' (' + ev.soft.length + ' הערות)' : ''));
       return;
     }
     const exact = ev.hard.every(h => h.sessionId && !h.locked) ? E.findWithMinimalChanges(s, a, { ctx, sessionId: c.sessionId, near: { day: c.day, start: c.start, end: c.end, exact: true }, maxChanges: 3, limit: 1 })[0] : null;
     const alts = E.findWithMinimalChanges(s, a, { ctx, sessionId: c.sessionId, near: { day: c.day, start: c.start }, maxChanges: 2, limit: 8 });
     const opts = (exact && exact.changes !== Infinity ? [exact] : []).concat(alts.filter(o => !(exact && o.day === exact.day && o.start === exact.start)));
     const body = '<div class="alert bad"><b>לא ניתן לשבץ את "' + esc(E.actLabel(ctx, a)) + '" ב' + esc(U.slotText(c)) + ':</b><ul>' + ev.hard.map(h => '<li>' + esc(h.reason) + '</li>').join('') + '</ul></div>' +
-      (exact && exact.changes !== Infinity ? '<h3>✅ אפשר בדיוק בזמן הזה – אם מזיזים:</h3>' : '<h3>חלופות קרובות (ממוינות לפי מספר שינויים וקרבה):</h3>') +
+      (exact && exact.changes !== Infinity ? '<h3>אפשר בדיוק בזמן הזה – אם מזיזים:</h3>' : '<h3>חלופות קרובות (ממוינות לפי מספר שינויים וקרבה):</h3>') +
       U.optionsList(opts);
     const m = modal('בדיקת שיבוץ', body, [
       { label: 'לשבץ בכל זאת (עם התנגשות)', cls: 'danger', onClick: () => { apply({ day: c.day, start: c.start, end: c.end, moves: [] }); } },
       { label: 'ביטול' }], { wide: true });
-    U.bindOptions(m, opts, o => { apply(o); m.close(); toast('✔ בוצע' + (o.changes ? ' – הוזזו ' + o.changes + ' מפגשים' : '')); });
+    U.bindOptions(m, opts, o => { apply(o); m.close(); toast('בוצע' + (o.changes ? ' – הוזזו ' + o.changes + ' מפגשים' : '')); });
   }
   P.tryPlace = tryPlace;
 
@@ -199,7 +199,7 @@
     const a = ctx.act.get(activityId);
     const opts = E.findWithMinimalChanges(s, a, { ctx, sessionId, maxChanges: 2, limit: 15 });
     const m = modal((sessionId ? 'חלופות עבור: ' : 'מקום עבור: ') + E.actLabel(ctx, a), '<p class="muted">המועדים ממוינים: קודם ללא שינויים בכלל, אח"כ לפי מספר המפגשים שצריך להזיז, ואז לפי "עלות" (כמה תלמידים מפספסים שיעורים וכו\').</p>' + U.optionsList(opts), null, { wide: true });
-    U.bindOptions(m, opts, o => { Store.change('שיבוץ', state => U.applyOption(state, activityId, sessionId, o)); m.close(); toast('✔ שובץ: ' + U.slotText(o)); });
+    U.bindOptions(m, opts, o => { Store.change('שיבוץ', state => U.applyOption(state, activityId, sessionId, o)); m.close(); toast('שובץ: ' + U.slotText(o)); });
   };
 
   function sessionDialog(sid) {
@@ -208,9 +208,9 @@
     const a = ctx.act.get(x.activityId);
     const ev = E.evaluate(ctx, x, { ignore: new Set([x.id]) });
     const studs = E.studentsOf(ctx, a);
-    const body = '<div class="row"><span class="chip">' + esc(E.typeOf(a).label) + '</span>' + (x.locked ? '<span class="chip">🔒 נעול</span>' : '') + '<b>' + esc(U.slotText(x)) + '</b></div>' +
+    const body = '<div class="row"><span class="chip">' + esc(E.typeOf(a).label) + '</span>' + (x.locked ? '<span class="chip">נעול</span>' : '') + '<b>' + esc(U.slotText(x)) + '</b></div>' +
       '<p><b>צוות:</b> ' + esc(E.staffNames(ctx, a.staffIds) || '—') + '<br><b>משתתפים:</b> ' + esc(studs.map(id => E.studentShort(ctx.students.get(id))).join(', ') || '—') + (a.roomId ? '<br><b>חדר:</b> ' + esc(U.nameOf('room', a.roomId)) : '') + '</p>' +
-      (ev.hard.length ? '<div class="alert bad"><b>התנגשויות:</b><ul>' + ev.hard.map(h => '<li>' + esc(h.reason) + '</li>').join('') + '</ul></div>' : '<div class="alert ok">✔ אין התנגשויות</div>') +
+      (ev.hard.length ? '<div class="alert bad"><b>התנגשויות:</b><ul>' + ev.hard.map(h => '<li>' + esc(h.reason) + '</li>').join('') + '</ul></div>' : '<div class="alert ok">אין התנגשויות</div>') +
       (ev.soft.length ? '<div class="alert warn"><b>הערות:</b><ul>' + ev.soft.map(h => '<li>' + esc(h.reason) + '</li>').join('') + '</ul></div>' : '') +
       '<h3>שינוי מועד</h3><div class="form-grid"><label><span>יום</span><select data-f="day">' + U.dayOptions(x.day) + '</select></label><label><span>התחלה</span>' + U.timeInput('start', x.start) + '</label><label><span>סיום</span>' + U.timeInput('end', x.end) + '</label>' +
       (s.settings.abWeeks ? '<label><span>שבועות</span><select data-f="weekPattern">' + options([{ value: 'all', label: 'כל שבוע' }, { value: 'A', label: 'שבוע א' }, { value: 'B', label: 'שבוע ב' }], x.weekPattern || 'all') + '</select></label>' : '') +
@@ -225,7 +225,7 @@
           tryPlace({ activityId: a.id, sessionId: sid, day: Number(d.day), start: d.start, end: d.end, weekPattern: d.weekPattern || x.weekPattern });
         } else Store.change('עדכון מפגש', state => { const q = state.sessions.find(z => z.id === sid); q.locked = d.locked; if (d.weekPattern) q.weekPattern = d.weekPattern; });
       } },
-      { label: '🔀 מצא חלופות', onClick: () => { P.findSlotDialog(a.id, sid); } },
+      { label: 'מצא חלופות', onClick: () => { P.findSlotDialog(a.id, sid); } },
       { label: 'עריכת הפעילות', onClick: () => { root.Pages.editActivity(a.id); } },
       { label: 'מחיקת מפגש', cls: 'danger', onClick: () => { Store.change('מחיקת מפגש', state => { state.sessions = state.sessions.filter(z => z.id !== sid); }); } },
       { label: 'סגירה' }
@@ -239,7 +239,7 @@
     const ctx = E.makeCtx(s);
     const cnt = new Map(); s.sessions.forEach(x => cnt.set(x.activityId, (cnt.get(x.activityId) || 0) + 1));
     const list = s.activities.slice().sort((a, b) => ((cnt.get(a.id) || 0) >= (Number(a.perWeek) || 0)) - ((cnt.get(b.id) || 0) >= (Number(b.perWeek) || 0)) || a.title.localeCompare(b.title))
-      .map(a => ({ value: a.id, label: (a.icon || E.typeOf(a).icon) + ' ' + a.title + ' – ' + ((a.classIds || []).map(c => U.nameOf('class', c)).join(', ') || E.studentsOf(ctx, a).map(id => E.studentShort(ctx.students.get(id))).slice(0, 3).join(', ')) + ' (' + (cnt.get(a.id) || 0) + '/' + (a.perWeek || 0) + ')' }));
+      .map(a => ({ value: a.id, label: a.title + ' – ' + ((a.classIds || []).map(c => U.nameOf('class', c)).join(', ') || E.studentsOf(ctx, a).map(id => E.studentShort(ctx.students.get(id))).slice(0, 3).join(', ')) + ' (' + (cnt.get(a.id) || 0) + '/' + (a.perWeek || 0) + ')' }));
     const m = modal('הוספת מפגש', '<div class="form-grid"><label class="full"><span>פעילות</span><select data-f="activityId">' + options(list, pre.activityId) + '</select></label>' +
       '<label><span>יום</span><select data-f="day">' + U.dayOptions(pre.day != null ? pre.day : s.settings.days[0]) + '</select></label><label><span>התחלה</span>' + U.timeInput('start', pre.start != null ? pre.start : 540) + '</label>' +
       '<label><span>משך (דקות, ריק = לפי הפעילות)</span><input type="number" step="5" data-f="dur"></label></div>', [
@@ -258,10 +258,10 @@
     const missing = E.coverage(s).reduce((x, c) => x + c.missing, 0);
     modal('שיבוץ אוטומטי', '<p>המערכת תשבץ את כל המפגשים החסרים (' + missing + ') לפי האילוצים, ותנסה למזער: התנגשויות, יציאות של תלמידים משיעורים, שיבוץ בהפסקות, וריכוז יתר ביום אחד.</p>' +
       '<label class="row"><input type="radio" name="mode" value="keep" checked> להשאיר את השיבוץ הקיים ולהשלים רק את החסר</label>' +
-      '<label class="row"><input type="radio" name="mode" value="rebuild"> לבנות מחדש את כל מה שלא נעול 🔒</label>' +
+      '<label class="row"><input type="radio" name="mode" value="rebuild"> לבנות מחדש את כל מה שלא נעול </label>' +
       '<label class="row"><input type="checkbox" id="protect"> לא להזיז מפגשים קיימים בכלל (גם לא לפינוי מקום)</label>' +
       '<label>מספר ניסיונות (יותר = טוב יותר, איטי יותר): <input type="number" id="iters" value="25" min="1" max="200" style="width:80px"></label><p class="muted small">טיפ: לפני שינוי גדול כדאי לשמור גרסה בהגדרות. בכל מקרה ניתן לבטל עם "ביטול".</p>', [
-      { label: '⚡ הפעלה', cls: 'pri', onClick: el => {
+      { label: 'הפעלה', cls: 'pri', onClick: el => {
         const mode = $('input[name=mode]:checked', el).value;
         const iters = Number($('#iters', el).value) || 25;
         toast('משבץ...');
@@ -269,7 +269,7 @@
           const t = Date.now();
           const r = E.autoSchedule(S(), { keepExisting: mode === 'keep', iterations: iters, protectExisting: $('#protect', el).checked, seed: Date.now() % 100000 });
           Store.change('שיבוץ אוטומטי', state => { state.sessions = r.sessions; });
-          const body = '<div class="alert ' + (r.unplaced.length ? 'warn' : 'ok') + '">שובצו ' + r.placed.length + ' מפגשים' + (r.unplaced.length ? ', ' + r.unplaced.length + ' לא שובצו' : ' – הכל שובץ ✔') + ' (' + ((Date.now() - t) / 1000).toFixed(1) + ' שנ\')</div>' +
+          const body = '<div class="alert ' + (r.unplaced.length ? 'warn' : 'ok') + '">שובצו ' + r.placed.length + ' מפגשים' + (r.unplaced.length ? ', ' + r.unplaced.length + ' לא שובצו' : ' – הכל שובץ') + ' (' + ((Date.now() - t) / 1000).toFixed(1) + ' שנ\')</div>' +
             r.unplaced.map(u => '<div class="alert bad"><b>' + esc(u.title) + '</b>: ' + esc(u.reason) + ' <button class="sm" data-fs="' + u.activityId + '">מצא מקום</button></div>').join('');
           const m2 = modal('תוצאות השיבוץ', body);
           $$('[data-fs]', m2).forEach(b => b.onclick = () => P.findSlotDialog(b.dataset.fs));

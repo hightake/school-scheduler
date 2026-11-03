@@ -4,7 +4,7 @@
   const E = root.Engine, U = root.UI, Store = root.Model.Store, V = root.Views, R = root.Render;
   const { esc, $, $$, S, modal, toast, options, readForm } = U;
   const P = root.Pages = root.Pages || {};
-  const STATUS = { free: '✅ פנוי', soft: '🟡 אפשרי (בשיעור)', busy: '⛔ תפוס', blocked: '⛔ חסום' };
+  const STATUS = { free: 'פנוי', soft: 'אפשרי (בשיעור)', busy: 'תפוס', blocked: 'חסום' };
 
   // ================= בדיקת זמן =================
   P.check = function (main) {
@@ -13,12 +13,12 @@
     main.innerHTML = '<h1>בדיקת זמן ושינויים</h1><p class="muted">בחרו זמן ומי מעורב – המערכת תראה לכל אחד אם הוא פנוי ומה יש לו. בחירת פעילות תבדוק אם אפשר לשבץ אותה כאן, ואם לא – איך להגיע לפתרון עם מינימום שינויים.</p>' +
       '<div class="card" id="qf"><div class="form-grid"><label><span>יום</span><select data-f="day">' + U.dayOptions(q.day) + '</select></label><label><span>משעה</span>' + U.timeInput('start', q.start) + '</label><label><span>עד שעה</span>' + U.timeInput('end', q.end) + '</label>' +
       (s.settings.abWeeks ? '<label><span>שבוע</span><select data-f="weekPattern">' + options([{ value: 'all', label: 'כל שבוע' }, { value: 'A', label: 'א' }, { value: 'B', label: 'ב' }], q.weekPattern) + '</select></label>' : '') +
-      '<label class="full"><span>פעילות לבדיקה (אופציונלי) – בחירה ממלאת אוטומטית את המשתתפים</span><select data-f="activityId" id="qa">' + options(s.activities.map(a => ({ value: a.id, label: (a.icon || E.typeOf(a).icon) + ' ' + a.title + ' – ' + ((a.classIds || []).map(c => U.nameOf('class', c)).join(', ') || (a.studentIds || []).map(x => U.nameOf('student', x)).slice(0, 3).join(', ')) })), q.activityId, { empty: '— ללא —' }) + '</select></label>' +
+      '<label class="full"><span>פעילות לבדיקה (אופציונלי) – בחירה ממלאת אוטומטית את המשתתפים</span><select data-f="activityId" id="qa">' + options(s.activities.map(a => ({ value: a.id, label: a.title + ' – ' + ((a.classIds || []).map(c => U.nameOf('class', c)).join(', ') || (a.studentIds || []).map(x => U.nameOf('student', x)).slice(0, 3).join(', ')) })), q.activityId, { empty: '— ללא —' }) + '</select></label>' +
       '<div class="full field"><span>תלמידים</span>' + U.multiPick('studentIds', U.studentItems(), q.studentIds) + '</div>' +
       '<div class="full field"><span>צוות / מטפלים</span>' + U.multiPick('staffIds', U.staffItems(), q.staffIds) + '</div>' +
       '<div class="field"><span>כיתות (כולל הכיתה שבה התלמיד משולב)</span>' + U.multiPick('classIds', U.classItems(), q.classIds) + '</div>' +
       '<div class="field"><span>חדרים</span>' + U.multiPick('roomIds', s.rooms.map(r => ({ id: r.id, label: r.name })), q.roomIds) + '</div>' +
-      '</div><div class="row" style="margin-top:10px"><button class="pri" id="run">🔎 בדיקה</button><button id="freeStaff">מי מהצוות פנוי בזמן זה?</button><button id="freeSlots">מתי כל הנבחרים פנויים יחד?</button></div></div><div id="res"></div>';
+      '</div><div class="row" style="margin-top:10px"><button class="pri" id="run">בדיקה</button><button id="freeStaff">מי מהצוות פנוי בזמן זה?</button><button id="freeSlots">מתי כל הנבחרים פנויים יחד?</button></div></div><div id="res"></div>';
     U.bindPickers(main);
     $('#qa').onchange = e => {
       const a = s.activities.find(x => x.id === e.target.value); if (!a) return;
@@ -44,16 +44,16 @@
         (r.outOfSchool ? '<div class="alert warn">שימו לב: הטווח מחוץ לשעות הלימודים</div>' : '');
       if (r.rows.length) {
         h += '<table class="data"><thead><tr><th>מי</th><th>מצב</th><th>פירוט</th><th>מה משובץ</th></tr></thead><tbody>' + r.rows.map(row => '<tr class="status-' + row.status + '"><td><b>' + esc(row.name) + '</b><div class="small muted">' + esc(row.sub) + '</div></td><td>' + STATUS[row.status] + '</td><td class="small">' + esc(row.note) + '</td><td class="small">' +
-          row.items.map(it => '<div>' + esc(it.time) + ' ' + esc(it.title) + (it.staff ? ' (' + esc(it.staff) + ')' : '') + (it.locked ? ' 🔒' : '') + (it.protected ? ' <span class="chip">מוגן</span>' : '') + ' <button class="sm" data-ses="' + it.sessionId + '">פתיחה</button></div>').join('') + '</td></tr>').join('') + '</tbody></table>';
+          row.items.map(it => '<div>' + esc(it.time) + ' ' + esc(it.title) + (it.staff ? ' (' + esc(it.staff) + ')' : '') + (it.locked ? ' ' : '') + (it.protected ? ' <span class="chip">מוגן</span>' : '') + ' <button class="sm" data-ses="' + it.sessionId + '">פתיחה</button></div>').join('') + '</td></tr>').join('') + '</tbody></table>';
       } else h += '<p class="muted">לא נבחרו תלמידים/צוות/כיתות לבדיקה.</p>';
       h += '</div>';
       const ac = r.activityCheck;
       if (ac) {
         h += '<div class="card"><h2>האם אפשר לשבץ "' + esc(ac.title) + '" בזמן הזה?</h2>';
-        if (ac.ok) h += '<div class="alert ok">✅ כן! אין התנגשויות.' + (ac.soft.length ? '<br>⚠ ' + ac.soft.map(x => esc(x.reason)).join(' · ') : '') + '</div><button class="pri" id="placeHere">שבץ כאן</button>';
+        if (ac.ok) h += '<div class="alert ok">כן! אין התנגשויות.' + (ac.soft.length ? '<br>' + ac.soft.map(x => esc(x.reason)).join(' · ') : '') + '</div><button class="pri" id="placeHere">שבץ כאן</button>';
         else {
           h += '<div class="alert bad"><b>לא, בגלל:</b><ul>' + ac.hard.map(x => '<li>' + esc(x.reason) + '</li>').join('') + '</ul></div>';
-          if (ac.exact) h += '<h3>✅ אפשר בדיוק בזמן הזה עם ' + ac.exact.changes + ' שינויים:</h3>' + U.optionsList([ac.exact]).replace('data-apply-opt="0"', 'data-exact="1"');
+          if (ac.exact) h += '<h3>אפשר בדיוק בזמן הזה עם ' + ac.exact.changes + ' שינויים:</h3>' + U.optionsList([ac.exact]).replace('data-apply-opt="0"', 'data-exact="1"');
           h += '<h3>חלופות קרובות לזמן המבוקש:</h3><div id="alts">' + U.optionsList(ac.alternatives) + '</div>';
         }
         h += '</div>';
@@ -61,7 +61,7 @@
       $('#res').innerHTML = h;
       $$('[data-ses]', $('#res')).forEach(b => b.onclick = () => P.sessionDialog(b.dataset.ses));
       if (ac) {
-        const apply = o => { Store.change('שיבוץ מבדיקת זמן', st => U.applyOption(st, ac.activityId, null, o)); toast('✔ שובץ: ' + U.slotText(o)); };
+        const apply = o => { Store.change('שיבוץ מבדיקת זמן', st => U.applyOption(st, ac.activityId, null, o)); toast('שובץ: ' + U.slotText(o)); };
         const ph = $('#placeHere'); if (ph) ph.onclick = () => apply({ day: q.day, start: q.start, end: q.end, moves: [] });
         const ex = $('[data-exact]'); if (ex) ex.onclick = () => apply(ac.exact);
         if (!ac.ok) U.bindOptions($('#alts'), ac.alternatives, apply);
@@ -99,7 +99,7 @@
       '<table class="data"><thead><tr><th>תלמיד</th><th>תחום</th><th>תדירות</th><th>הערות</th><th>סטטוס</th><th></th></tr></thead><tbody>' +
       s.recommendations.slice().reverse().map(r => '<tr><td><b>' + esc(U.nameOf('student', r.studentId)) + '</b></td><td>' + esc(r.specialty) + '</td><td>' + (r.perWeek || 1) + ' × ' + (r.duration || 'שיעור') + ' ד\'</td><td class="small">' + esc(r.notes || '') + '</td><td>' +
         (r.status === 'scheduled' ? '<span class="chip ok">שובץ</span>' : r.status === 'rejected' ? '<span class="chip">נדחה</span>' : '<span class="chip warn">פתוח</span>') + '</td><td style="white-space:nowrap">' +
-        (r.status === 'open' ? '<button class="sm pri" data-sug="' + r.id + '">💡 הצע שיבוץ</button> ' : '') + '<button class="sm" data-edit="' + r.id + '">עריכה</button></td></tr>').join('') + '</tbody></table>';
+        (r.status === 'open' ? '<button class="sm pri" data-sug="' + r.id + '">הצע שיבוץ</button> ' : '') + '<button class="sm" data-edit="' + r.id + '">עריכה</button></td></tr>').join('') + '</tbody></table>';
     $('#add').onclick = () => P.recDialog({});
     $$('[data-edit]', main).forEach(b => b.onclick = () => P.recDialog(s.recommendations.find(r => r.id === b.dataset.edit)));
     $$('[data-sug]', main).forEach(b => b.onclick = () => suggest(b.dataset.sug));
@@ -143,8 +143,8 @@
     h += '<h3>הצעות שיבוץ</h3>';
     if (!res.options.length) h += '<div class="alert warn">לא נמצא זמן פנוי משותף. נסו: להגדיל זמינות של איש הצוות, לקצר משך, או לבדוק ב"בדיקת זמן" מה חוסם.</div>';
     res.options.forEach((o, i) => {
-      if (o.kind === 'join') h += '<div class="opt"><div class="row"><span class="chip ok">הצטרפות לקבוצה קיימת</span><b>' + esc(o.title) + '</b> – ' + esc(o.staff) + ' <span class="muted small">(' + esc(o.group) + ')</span><button class="sm pri right" data-o="' + i + '">בחירה</button></div><div class="moves">' + o.slots.map(U.slotText).join(' · ') + (o.notes.length ? '<br>⚠ ' + esc(o.notes.join(' · ')) : '') + '</div></div>';
-      else h += '<div class="opt"><div class="row"><span class="chip">מפגש חדש</span><b>' + esc(o.staff) + '</b>' + (o.complete ? '' : ' <span class="chip warn">נמצאו רק ' + o.slots.length + ' מתוך ' + rec.perWeek + '</span>') + '<button class="sm pri right" data-o="' + i + '">בחירה</button></div><div class="moves">' + o.slots.map(x => esc(U.slotText(x)) + (x.notes && x.notes.length ? ' <span class="muted">(⚠ ' + esc(x.notes.join(', ')) + ')</span>' : '')).join('<br>') +
+      if (o.kind === 'join') h += '<div class="opt"><div class="row"><span class="chip ok">הצטרפות לקבוצה קיימת</span><b>' + esc(o.title) + '</b> – ' + esc(o.staff) + ' <span class="muted small">(' + esc(o.group) + ')</span><button class="sm pri right" data-o="' + i + '">בחירה</button></div><div class="moves">' + o.slots.map(U.slotText).join(' · ') + (o.notes.length ? '<br>' + esc(o.notes.join(' · ')) : '') + '</div></div>';
+      else h += '<div class="opt"><div class="row"><span class="chip">מפגש חדש</span><b>' + esc(o.staff) + '</b>' + (o.complete ? '' : ' <span class="chip warn">נמצאו רק ' + o.slots.length + ' מתוך ' + rec.perWeek + '</span>') + '<button class="sm pri right" data-o="' + i + '">בחירה</button></div><div class="moves">' + o.slots.map(x => esc(U.slotText(x)) + (x.notes && x.notes.length ? ' <span class="muted">(' + esc(x.notes.join(', ')) + ')</span>' : '')).join('<br>') +
         (o.alternatives.length ? '<details><summary class="small">מועדים פנויים נוספים</summary>' + o.alternatives.map(x => '<span class="chip">' + esc(U.slotText(x)) + '</span>').join('') + '</details>' : '') + '</div></div>';
     });
     const m = modal('הצעות שיבוץ להמלצה', h, null, { wide: true });
@@ -165,7 +165,7 @@
         }
         r.status = 'scheduled';
       });
-      m.close(); toast('✔ ההמלצה שובצה');
+      m.close(); toast('ההמלצה שובצה');
     });
   }
 
@@ -178,7 +178,7 @@
     const oneActs = new Map(E.oneOffActivities(s).map(a => [a.id, a]));
     const list = (s.oneOffs || []).slice().sort((a, b) => a.date.localeCompare(b.date) || a.start - b.start);
     main.innerHTML = '<h1>שינויים, אירועים והדרכות משתנות</h1><p class="muted">המערכת השבועית היא הבסיס. כאן מוסיפים שינויים לתאריך מסוים: הדרכה משתנה, ביטול מפגש, הזזה חד-פעמית, היעדרות איש צוות (עם הצעת מחליף). הכל מופיע במערכת לפי תאריך / חודש.</p>' +
-      '<div class="toolbar"><button class="pri" id="add">+ אירוע / הדרכה חד-פעמית</button><button id="cancel">ביטול / הזזת מפגש בתאריך</button><button id="absent">🤒 היעדרות איש צוות</button><label>חודש: <input type="month" id="mon" value="' + month + '"></label></div>' +
+      '<div class="toolbar"><button class="pri" id="add">+ אירוע / הדרכה חד-פעמית</button><button id="cancel">ביטול / הזזת מפגש בתאריך</button><button id="absent">היעדרות איש צוות</button><label>חודש: <input type="month" id="mon" value="' + month + '"></label></div>' +
       '<div class="card"><h2>שינויים בחודש</h2><table class="data"><thead><tr><th>תאריך</th><th>סוג</th><th>מה</th><th>שעה</th><th>הערה</th><th></th></tr></thead><tbody>' +
       list.filter(o => o.date.startsWith(month)).map(o => {
         const ses = o.sessionId ? s.sessions.find(x => x.id === o.sessionId) : null;
@@ -196,7 +196,7 @@
     $('#show').onclick = () => {
       mem.calId = $('#vi').value;
       const v = V.build(S(), { kind: $('#vk').value, id: $('#vi').value, range: { mode: 'month', month }, options: { showNames: true } });
-      $('#mview').innerHTML = '<div class="row no-print" style="margin-bottom:8px"><button id="mp">🖨️ הדפסה/PDF</button><button id="mx">📗 Excel</button><button id="mw">📘 Word</button></div><div class="tt-preview">' + R.viewHtml(v) + '</div>';
+      $('#mview').innerHTML = '<div class="row no-print" style="margin-bottom:8px"><button id="mp">הדפסה/PDF</button><button id="mx">Excel</button><button id="mw">Word</button></div><div class="tt-preview">' + R.viewHtml(v) + '</div>';
       $('#mp').onclick = () => R.printViews([v]); $('#mx').onclick = () => R.excelViews([v]); $('#mw').onclick = () => R.wordViews([v]);
     };
     if (mem.calId) $('#show').click();
@@ -307,7 +307,7 @@
   P.export = function (main, params) {
     const s = S();
     const mem = root.App.mem;
-    const st = mem.exp || (mem.exp = { kind: 'student', id: '', all: false, mode: 'week', day: s.settings.days[0], from: '', to: '', date: new Date().toISOString().slice(0, 10), month: new Date().toISOString().slice(0, 7), pattern: 'all', showNames: true, icons: true, color: true, staff: true, rooms: false, classFilter: '' });
+    const st = mem.exp || (mem.exp = { kind: 'student', id: '', all: false, mode: 'week', day: s.settings.days[0], from: '', to: '', date: new Date().toISOString().slice(0, 10), month: new Date().toISOString().slice(0, 7), pattern: 'all', showNames: true, icons: false, color: true, staff: true, rooms: false, classFilter: '' });
     if (params && params.kind) { st.kind = params.kind; st.id = params.id || ''; st.all = false; }
     main.innerHTML = '<h1>הפקת מערכות שעות</h1><div class="card" id="ef"><div class="form-grid">' +
       '<label><span>סוג מערכת</span><select data-f="kind" id="ek">' + options(Object.entries(V.KINDS).map(([k, v]) => ({ value: k, label: v })), st.kind) + '</select></label>' +
@@ -321,7 +321,7 @@
       '<label data-m="month"><span>חודש</span><input type="month" data-f="month" value="' + st.month + '"></label>' +
       (s.settings.abWeeks ? '<label data-m="week day hours"><span>שבוע</span><select data-f="pattern">' + options([{ value: 'all', label: 'כל השבועות' }, { value: 'A', label: 'שבוע א' }, { value: 'B', label: 'שבוע ב' }], st.pattern) + '</select></label>' : '') +
       '<div class="full row"><label class="row"><input type="checkbox" data-f="showNames"' + (st.showNames ? ' checked' : '') + '> שמות תלמידים</label><label class="row"><input type="checkbox" data-f="staff"' + (st.staff ? ' checked' : '') + '> שמות צוות</label><label class="row"><input type="checkbox" data-f="icons"' + (st.icons ? ' checked' : '') + '> סמלים</label><label class="row"><input type="checkbox" data-f="color"' + (st.color ? ' checked' : '') + '> צבעים</label><label class="row"><input type="checkbox" data-f="rooms"' + (st.rooms ? ' checked' : '') + '> חדרים</label></div>' +
-      '</div><div class="row" style="margin-top:10px"><button id="prev">👁 תצוגה מקדימה</button><button class="pri" id="pr">🖨️ הדפסה / שמירה כ-PDF</button><button id="xl">📗 הורדת Excel</button><button id="wd">📘 הורדת Word</button></div>' +
+      '</div><div class="row" style="margin-top:10px"><button id="prev">תצוגה מקדימה</button><button class="pri" id="pr">הדפסה / שמירה כ-PDF</button><button id="xl">הורדת Excel</button><button id="wd">הורדת Word</button></div>' +
       '<p class="muted small">PDF: בחלון ההדפסה בחרו "שמירה כ-PDF". Word: נפתח ב-Word וניתן לערוך. Excel: כל מערכת בגיליון נפרד.</p></div><div id="eprev" class="tt-preview"></div>';
     const fillIds = () => { $('#ei').innerHTML = entityOptions($('#ek').value, st.id); };
     const sync = () => {
@@ -357,7 +357,7 @@
     const load = E.staffLoad(s);
     const cov = E.coverage(s);
     const rows = s.students.map(st => ({ st, r: E.studentReport(s, st.id) }));
-    main.innerHTML = '<h1>דוחות</h1><div class="toolbar"><button id="xl">📗 הורדת כל הדוחות ל-Excel</button></div>' +
+    main.innerHTML = '<h1>דוחות</h1><div class="toolbar"><button id="xl">הורדת כל הדוחות ל-Excel</button></div>' +
       '<div class="card"><h2>עומס צוות (שעות שבועיות)</h2><table class="data"><tr><th>שם</th><th>תפקיד</th><th>משובץ</th><th>מכסה</th></tr>' + load.map(l => '<tr><td>' + esc(l.name) + '</td><td>' + esc(E.ROLES[l.role] || '') + '</td><td>' + U.hours(l.load) + '</td><td>' + (l.max ? '<span class="chip ' + (l.over ? 'bad' : 'ok') + '">' + U.hours(l.max) + '</span>' : '—') + '</td></tr>').join('') + '</table></div>' +
       '<div class="card"><h2>תלמידים – שעות לפי סוג, ומה מפספסים</h2><table class="data"><tr><th>תלמיד</th><th>כיתה</th>' + ['inclusion', 'therapy', 'help', 'group'].map(t => '<th>' + E.TYPES[t].label + '</th>').join('') + '<th>שיעורים שמפספסים (דק\'/שבוע)</th></tr>' +
       rows.map(({ st, r }) => '<tr><td>' + esc(E.studentFull(st)) + '</td><td>' + esc(U.nameOf('class', st.classId)) + '</td>' + ['inclusion', 'therapy', 'help', 'group'].map(t => '<td>' + (r.byType[t] ? U.hours(r.byType[t]) : '') + '</td>').join('') + '<td class="small">' + Object.entries(r.missed).map(([k, v]) => esc(k) + ': ' + Math.round(v)).join(' · ') + '</td></tr>').join('') + '</table></div>' +

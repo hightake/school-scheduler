@@ -9,7 +9,7 @@
   P.dashboard = function (main) {
     const s = S();
     if (!s.students.length && !s.staff.length) {
-      main.innerHTML = '<h1>ברוכים הבאים לשיבוץ 👋</h1><div class="card"><p>מערכת לבניית מערכות שעות חכמה למוסד חינוכי – עם התחשבות באילוצים של תלמידים, מורים, מטפלים, כיתות ושילוב בכיתות רגילות.</p>' +
+      main.innerHTML = '<h1>ברוכים הבאים לשיבוץ </h1><div class="card"><p>מערכת לבניית מערכות שעות חכמה למוסד חינוכי – עם התחשבות באילוצים של תלמידים, מורים, מטפלים, כיתות ושילוב בכיתות רגילות.</p>' +
         '<ol><li>הגדירו את ימי הלימודים ושעות השיעורים ב<b>הגדרות</b>.</li><li>הכניסו (או ייבאו מאקסל/PDF/Word) <b>תלמידים, צוות וכיתות</b>.</li><li>הגדירו <b>פעילויות ודרישות</b> – שיעורים, שילוב, טיפולים, הדרכות.</li><li>לחצו <b>שיבוץ אוטומטי</b> בלוח השיבוץ, ותקנו בגרירה.</li><li>הפיקו מערכות לתלמיד / כיתה / מחנך / מורה בכיתה רגילה.</li></ol>' +
         '<div class="row"><button class="pri" id="loadSample">טעינת נתוני דוגמה להתנסות</button><button data-go="settings">התחלה מאפס – להגדרות</button><button data-go="import">ייבוא מקבצים</button></div></div>';
       $('#loadSample').onclick = () => { Store.replace(root.Model.sampleState(), 'טעינת נתוני דוגמה'); toast('נתוני דוגמה נטענו. עברו ללוח השיבוץ ולחצו "שיבוץ אוטומטי"'); };
@@ -24,11 +24,11 @@
       stat(s.activities.length, 'פעילויות', '', 'activities') + stat(s.sessions.length, 'מפגשים משובצים', '', 'board') +
       stat(conf.length, 'התנגשויות', conf.length ? 'bad' : 'ok', 'board') + stat(cov.reduce((x, c) => x + c.missing, 0), 'מפגשים שטרם שובצו', cov.length ? 'warn' : 'ok', 'board') +
       stat(recs.length, 'המלצות פתוחות', recs.length ? 'warn' : 'ok', 'recs') + '</div>' +
-      '<div class="toolbar"><button class="pri" data-go="board">🧩 ללוח השיבוץ</button><button data-go="check">🔎 בדיקת זמן</button><button data-go="export">🖨️ הפקת מערכות</button></div>' +
-      (conf.length ? '<div class="card"><h2>⛔ התנגשויות (' + conf.length + ')</h2>' + conf.slice(0, 30).map(c => '<div class="alert bad">יום ' + E.DAY_NAMES[c.day] + ' ' + c.time + ' – <b>' + esc(c.title) + '</b>: ' + esc(c.reason) + '</div>').join('') + '</div>' : '<div class="alert ok">✔ אין התנגשויות במערכת</div>') +
+      '<div class="toolbar"><button class="pri" data-go="board">ללוח השיבוץ</button><button data-go="check">בדיקת זמן</button><button data-go="export">הפקת מערכות</button></div>' +
+      (conf.length ? '<div class="card"><h2>התנגשויות (' + conf.length + ')</h2>' + conf.slice(0, 30).map(c => '<div class="alert bad">יום ' + E.DAY_NAMES[c.day] + ' ' + c.time + ' – <b>' + esc(c.title) + '</b>: ' + esc(c.reason) + '</div>').join('') + '</div>' : '<div class="alert ok">אין התנגשויות במערכת</div>') +
       (cov.length ? '<div class="card"><h2>⏳ פעילויות שחסרים להן מפגשים</h2><table class="data"><tr><th>פעילות</th><th>נדרש</th><th>שובץ</th><th></th></tr>' + cov.map(c => '<tr><td>' + esc(c.title) + '</td><td>' + c.required + '</td><td>' + c.scheduled + '</td><td><button class="sm" data-find="' + c.activityId + '">מצא מקום</button></td></tr>').join('') + '</table></div>' : '') +
-      (load.length ? '<div class="card"><h2>⚠ חריגה ממכסת שעות</h2>' + load.map(l => '<div class="alert warn">' + esc(l.name) + ': ' + U.hours(l.load) + ' מתוך ' + U.hours(l.max) + '</div>').join('') + '</div>' : '') +
-      (recs.length ? '<div class="card"><h2>💡 המלצות שממתינות לשיבוץ</h2>' + recs.map(r => '<div class="alert info">' + esc(U.nameOf('student', r.studentId)) + ' – ' + esc(r.specialty) + ' <button class="sm" data-go="recs">לטיפול</button></div>').join('') + '</div>' : '');
+      (load.length ? '<div class="card"><h2>חריגה ממכסת שעות</h2>' + load.map(l => '<div class="alert warn">' + esc(l.name) + ': ' + U.hours(l.load) + ' מתוך ' + U.hours(l.max) + '</div>').join('') + '</div>' : '') +
+      (recs.length ? '<div class="card"><h2>המלצות שממתינות לשיבוץ</h2>' + recs.map(r => '<div class="alert info">' + esc(U.nameOf('student', r.studentId)) + ' – ' + esc(r.specialty) + ' <button class="sm" data-go="recs">לטיפול</button></div>').join('') + '</div>' : '');
     $$('[data-find]', main).forEach(b => b.onclick = () => root.Pages.findSlotDialog(b.dataset.find));
   };
   function stat(n, label, cls, go) { return '<div class="stat ' + (cls || '') + '" data-go="' + go + '" style="cursor:pointer"><b>' + n + '</b>' + esc(label) + '</div>'; }
@@ -40,13 +40,13 @@
     const list = s.students.filter(x => !f || x.classId === f).sort((a, b) => E.studentFull(a).localeCompare(E.studentFull(b)));
     const cls = new Map(s.classes.map(c => [c.id, c]));
     const ctx = E.makeCtx(s);
-    main.innerHTML = '<h1>תלמידים</h1><div class="toolbar"><button class="pri" id="add">+ תלמיד חדש</button><button id="bulk">+ הוספה מרובה (רשימת שמות)</button><button data-go="import">📥 ייבוא מקובץ</button>' +
+    main.innerHTML = '<h1>תלמידים</h1><div class="toolbar"><button class="pri" id="add">+ תלמיד חדש</button><button id="bulk">+ הוספה מרובה (רשימת שמות)</button><button data-go="import">ייבוא מקובץ</button>' +
       '<select id="fcls">' + options(s.classes, f, { empty: 'כל הכיתות' }) + '</select><input id="q" type="search" placeholder="חיפוש שם..."><span class="muted">' + list.length + ' תלמידים</span></div>' +
       '<table class="data" id="tbl"><thead><tr><th>שם</th><th>כיתה</th><th>פעילויות</th><th>אילוצים</th><th>הערות</th><th></th></tr></thead><tbody>' +
       list.map(st => {
         const acts = s.activities.filter(a => E.studentsOf(ctx, a).includes(st.id) && E.layerOf(a) > 0);
-        return '<tr data-name="' + esc(E.studentFull(st)) + '"><td><b>' + esc(st.icon || '') + ' ' + esc(E.studentFull(st)) + '</b></td><td>' + esc((cls.get(st.classId) || {}).name || '—') + '</td><td>' +
-          acts.map(a => '<span class="chip">' + esc(a.icon || E.typeOf(a).icon) + ' ' + esc(a.title) + '</span>').join('') + '</td><td>' + (st.unavailable || []).map(u => '<span class="chip warn">' + E.DAY_SHORT[u.day] + ' ' + E.fmtRange(u.start, u.end) + '</span>').join('') +
+        return '<tr data-name="' + esc(E.studentFull(st)) + '"><td><b>' + esc(E.studentFull(st)) + '</b></td><td>' + esc((cls.get(st.classId) || {}).name || '—') + '</td><td>' +
+          acts.map(a => '<span class="chip">' + U.dot(a) + esc(a.title) + '</span>').join('') + '</td><td>' + (st.unavailable || []).map(u => '<span class="chip warn">' + E.DAY_SHORT[u.day] + ' ' + E.fmtRange(u.start, u.end) + '</span>').join('') +
           '</td><td class="small">' + esc(st.notes || '') + '</td><td style="white-space:nowrap"><button class="sm" data-tt="' + st.id + '">מערכת</button> <button class="sm" data-rec="' + st.id + '">+ המלצה</button> <button class="sm" data-edit="' + st.id + '">עריכה</button></td></tr>';
       }).join('') + '</tbody></table>';
     $('#fcls').onchange = e => { root.App.mem.studentClass = e.target.value; P.students(main); };
@@ -65,10 +65,10 @@
     const acts = id ? s.activities.filter(a => E.studentsOf(ctx, a).includes(id)) : [];
     const rep = id ? E.studentReport(s, id) : null;
     const body = '<div class="form-grid"><label><span>שם פרטי</span><input data-f="firstName" value="' + esc(st.firstName) + '"></label><label><span>שם משפחה</span><input data-f="lastName" value="' + esc(st.lastName) + '"></label>' +
-      '<label><span>כיתת אם</span><select data-f="classId">' + options(s.classes, st.classId, { empty: '— ללא —' }) + '</select></label><label><span>סמל (אימוג\'י לזיהוי)</span><input data-f="icon" value="' + esc(st.icon || '') + '" maxlength="4"></label>' +
+      '<label><span>כיתת אם</span><select data-f="classId">' + options(s.classes, st.classId, { empty: '— ללא —' }) + '</select></label><label><span>סמל לזיהוי (לא חובה)</span><input data-f="icon" value="' + esc(st.icon || '') + '" maxlength="4"></label>' +
       '<div class="full field"><span>זמנים שבהם התלמיד לא זמין (טיפול חיצוני, הסעה, וכו\')</span>' + U.winsEditor('unavailable', st.unavailable, { reason: true }) + '</div>' +
       '<label class="full"><span>הערות / צרכים</span><textarea data-f="notes">' + esc(st.notes || '') + '</textarea></label></div>' +
-      (id ? '<h3>פעילויות של התלמיד</h3>' + (acts.length ? acts.map(a => '<span class="chip">' + esc(a.icon || E.typeOf(a).icon) + ' ' + esc(a.title) + '</span>').join('') : '<span class="muted">אין</span>') +
+      (id ? '<h3>פעילויות של התלמיד</h3>' + (acts.length ? acts.map(a => '<span class="chip">' + U.dot(a) + esc(a.title) + '</span>').join('') : '<span class="muted">אין</span>') +
         (Object.keys(rep.missed).length ? '<h3>מה התלמיד מפספס בגלל יציאות (דקות בשבוע)</h3>' + Object.entries(rep.missed).map(([k, v]) => '<span class="chip warn">' + esc(k) + ': ' + Math.round(v) + '</span>').join('') : '') : '');
     const btns = [{ label: 'שמירה', cls: 'pri', onClick: el => {
       const d = readForm(el);
@@ -109,7 +109,7 @@
     const s = S();
     const loads = new Map(E.staffLoad(s).map(x => [x.staffId, x]));
     const list = s.staff.slice().sort((a, b) => (a.role || '').localeCompare(b.role || '') || a.name.localeCompare(b.name));
-    main.innerHTML = '<h1>צוות ומטפלים</h1><div class="toolbar"><button class="pri" id="add">+ איש צוות</button><button data-go="import">📥 ייבוא מקובץ</button><input id="q" type="search" placeholder="חיפוש..."></div>' +
+    main.innerHTML = '<h1>צוות ומטפלים</h1><div class="toolbar"><button class="pri" id="add">+ איש צוות</button><button data-go="import">ייבוא מקובץ</button><input id="q" type="search" placeholder="חיפוש..."></div>' +
       '<table class="data" id="tbl"><thead><tr><th>שם</th><th>תפקיד</th><th>תחומים</th><th>זמינות</th><th>עומס שבועי</th><th></th></tr></thead><tbody>' +
       list.map(st => {
         const l = loads.get(st.id);
@@ -164,7 +164,7 @@
   P.classes = function (main) {
     const s = S();
     const ctx = E.makeCtx(s);
-    main.innerHTML = '<h1>כיתות</h1><p class="muted">כיתות חינוך מיוחד = כיתת האם של התלמידים. כיתות רגילות = כיתות שאליהן התלמידים משתלבים בחלק מהיום.</p><div class="toolbar"><button class="pri" id="add">+ כיתה</button><button data-go="import">📥 ייבוא מקובץ</button></div>' +
+    main.innerHTML = '<h1>כיתות</h1><p class="muted">כיתות חינוך מיוחד = כיתת האם של התלמידים. כיתות רגילות = כיתות שאליהן התלמידים משתלבים בחלק מהיום.</p><div class="toolbar"><button class="pri" id="add">+ כיתה</button><button data-go="import">ייבוא מקובץ</button></div>' +
       '<table class="data"><thead><tr><th>כיתה</th><th>סוג</th><th>מחנך/ת</th><th>תלמידים</th><th></th></tr></thead><tbody>' +
       s.classes.map(c => {
         const n = (ctx.classMembers.get(c.id) || []).length;
@@ -208,13 +208,13 @@
     const cnt = new Map(); s.sessions.forEach(x => cnt.set(x.activityId, (cnt.get(x.activityId) || 0) + 1));
     const list = s.activities.filter(a => !ft || a.type === ft);
     main.innerHTML = '<h1>פעילויות ודרישות</h1><p class="muted">כל דבר שצריך להופיע במערכת: שיעור כיתתי, שגרה (תפילה/ארוחה), שילוב בכיתה רגילה, טיפול, עזרה פרטנית, חוג, הדרכה, ישיבה. לכל פעילות מגדירים משתתפים, משך, כמה פעמים בשבוע ואילוצים – והמערכת משבצת.</p>' +
-      '<div class="toolbar"><button class="pri" id="add">+ פעילות</button><select id="ft">' + options(Object.entries(E.TYPES).map(([k, t]) => ({ value: k, label: t.icon + ' ' + t.label })), ft, { empty: 'כל הסוגים' }) + '</select><input id="q" type="search" placeholder="חיפוש..."></div>' +
+      '<div class="toolbar"><button class="pri" id="add">+ פעילות</button><select id="ft">' + options(Object.entries(E.TYPES).map(([k, t]) => ({ value: k, label: t.label })), ft, { empty: 'כל הסוגים' }) + '</select><input id="q" type="search" placeholder="חיפוש..."></div>' +
       '<table class="data" id="tbl"><thead><tr><th>פעילות</th><th>סוג</th><th>משתתפים</th><th>צוות</th><th>משך</th><th>שובץ / נדרש</th><th></th></tr></thead><tbody>' +
       list.map(a => {
         const studs = E.studentsOf(ctx, a);
         const n = cnt.get(a.id) || 0, req = Number(a.perWeek) || 0;
         const who = (a.classIds || []).map(c => U.nameOf('class', c)).concat((a.studentIds || []).length ? [(a.studentIds || []).map(x => E.studentShort(ctx.students.get(x))).join(', ')] : []).filter(Boolean).join(' + ');
-        return '<tr data-name="' + esc(a.title + ' ' + who) + '"><td><b>' + esc(a.icon || E.typeOf(a).icon) + ' ' + esc(a.title) + '</b>' + (a.weekPattern && a.weekPattern !== 'all' ? ' <span class="chip">שבוע ' + a.weekPattern + '</span>' : '') + (E.isProtected(a) ? ' <span class="chip">מוגן</span>' : '') + (a.linkActivityId ? ' <span class="chip">מקושר ל"' + esc(U.nameOf('activity', a.linkActivityId)) + '"</span>' : '') + '</td><td>' + esc(E.typeOf(a).label) + '</td><td class="small">' + esc(who || '—') + (studs.length ? ' <span class="muted">(' + studs.length + ')</span>' : '') + '</td><td class="small">' + esc(E.staffNames(ctx, a.staffIds)) + '</td><td>' + (a.duration ? a.duration + ' ד\'' : 'שיעור') + '</td><td><span class="chip ' + (n >= req ? 'ok' : 'warn') + '">' + n + ' / ' + req + '</span></td>' +
+        return '<tr data-name="' + esc(a.title + ' ' + who) + '"><td>' + U.dot(a) + '<b>' + esc(a.title) + '</b>' + (a.weekPattern && a.weekPattern !== 'all' ? ' <span class="chip">שבוע ' + a.weekPattern + '</span>' : '') + (E.isProtected(a) ? ' <span class="chip">מוגן</span>' : '') + (a.linkActivityId ? ' <span class="chip">מקושר ל"' + esc(U.nameOf('activity', a.linkActivityId)) + '"</span>' : '') + '</td><td>' + esc(E.typeOf(a).label) + '</td><td class="small">' + esc(who || '—') + (studs.length ? ' <span class="muted">(' + studs.length + ')</span>' : '') + '</td><td class="small">' + esc(E.staffNames(ctx, a.staffIds)) + '</td><td>' + (a.duration ? a.duration + ' ד\'' : 'שיעור') + '</td><td><span class="chip ' + (n >= req ? 'ok' : 'warn') + '">' + n + ' / ' + req + '</span></td>' +
           '<td style="white-space:nowrap">' + (n < req && !a.linkActivityId ? '<button class="sm" data-find="' + a.id + '">מצא מקום</button> ' : '') + '<button class="sm" data-dup="' + a.id + '">שכפול</button> <button class="sm" data-edit="' + a.id + '">עריכה</button></td></tr>';
       }).join('') + '</tbody></table>';
     $('#ft').onchange = e => { root.App.mem.actType = e.target.value; P.activities(main); };
@@ -233,14 +233,14 @@
     const lessonsOf = s.activities.filter(x => x.type === 'lesson' && x.id !== id);
     const body = '<div class="form-grid">' +
       '<label><span>שם הפעילות</span><input data-f="title" value="' + esc(a.title) + '"></label>' +
-      '<label><span>סוג</span><select data-f="type" id="aType">' + options(Object.entries(E.TYPES).map(([k, t]) => ({ value: k, label: t.icon + ' ' + t.label })), a.type) + '</select></label>' +
+      '<label><span>סוג</span><select data-f="type" id="aType">' + options(Object.entries(E.TYPES).map(([k, t]) => ({ value: k, label: t.label })), a.type) + '</select></label>' +
       '<label><span>משך בדקות (ריק = אורך השיעור)</span><input type="number" min="5" step="5" data-f="duration" value="' + esc(a.duration) + '"></label>' +
       '<label><span>מספר מפגשים בשבוע</span><input type="number" min="0" data-f="perWeek" value="' + esc(a.perWeek) + '"></label>' +
       '<label><span>תבנית שבועות</span><select data-f="weekPattern">' + options([{ value: 'all', label: 'כל שבוע' }, { value: 'A', label: 'שבוע א בלבד (לסירוגין)' }, { value: 'B', label: 'שבוע ב בלבד (לסירוגין)' }], a.weekPattern) + '</select></label>' +
       '<label><span>חדר</span><select data-f="roomId">' + options(s.rooms, a.roomId, { empty: '— ללא —' }) + '</select></label>' +
       '<label><span>תחום (לזיהוי בהמלצות)</span><input data-f="specialty" list="specList" value="' + esc(a.specialty || '') + '"><datalist id="specList">' + (s.settings.specialties || []).map(x => '<option value="' + esc(x) + '">').join('') + '</datalist></label>' +
       '<label><span>מקסימום תלמידים בקבוצה</span><input type="number" min="0" data-f="maxStudents" value="' + esc(a.maxStudents || '') + '"></label>' +
-      '<label><span>סמל (אימוג\'י)</span><input data-f="icon" value="' + esc(a.icon || '') + '" maxlength="4" placeholder="' + esc(E.typeOf(a).icon) + '"></label>' +
+      '<label><span>סמל במערכת התלמיד (לא חובה)</span><input data-f="icon" value="' + esc(a.icon || '') + '" maxlength="4" placeholder="' + esc(E.typeOf(a).icon) + '"></label>' +
       '<label><span>צבע</span><input type="color" data-f="color" value="' + esc(a.color || E.typeOf(a).color) + '"></label>' +
       '<div class="full field"><span>כיתות משתתפות (כל תלמידי הכיתה)</span>' + U.multiPick('classIds', U.classItems(), a.classIds) + '</div>' +
       '<div class="full field"><span>תלמידים משתתפים (בנוסף/במקום כיתה)</span>' + U.multiPick('studentIds', U.studentItems(), a.studentIds) + '</div>' +
@@ -306,7 +306,7 @@
       '<div class="card"><h2>חדרים</h2><table class="data" id="rooms"><thead><tr><th>שם</th><th>קיבולת (מפגשים במקביל)</th><th></th></tr></thead><tbody>' + s.rooms.map(roomRow).join('') + '</tbody></table><div class="row" style="margin-top:8px"><button id="addRoom">+ חדר</button><button class="pri" id="saveRooms">שמירת חדרים</button></div></div>' +
       '<div class="card"><h2>חגים וימים ללא לימודים</h2><table class="data" id="hol"><thead><tr><th>מתאריך</th><th>עד תאריך</th><th>תיאור</th><th></th></tr></thead><tbody>' + (st.holidays || []).map(holRow).join('') + '</tbody></table><div class="row" style="margin-top:8px"><button id="addHol">+ חג/חופשה</button><button class="pri" id="saveHol">שמירה</button></div></div>' +
       '<div class="card"><h2>תחומי טיפול והתמחות</h2><textarea id="specs">' + esc((st.specialties || []).join('\n')) + '</textarea><button class="pri" id="saveSpecs">שמירה</button></div>' +
-      '<div class="card"><h2>גיבוי, גרסאות ונתונים</h2><div class="row"><button id="exp">💾 הורדת גיבוי (JSON)</button><label class="row"><span>שחזור מגיבוי:</span><input type="file" id="imp" accept=".json"></label></div>' +
+      '<div class="card"><h2>גיבוי, גרסאות ונתונים</h2><div class="row"><button id="exp">הורדת גיבוי (JSON)</button><label class="row"><span>שחזור מגיבוי:</span><input type="file" id="imp" accept=".json"></label></div>' +
       '<h3>גרסאות שמורות</h3><div class="row"><input id="snapName" placeholder="שם הגרסה (למשל: לפני שינוי טיפולים)"><button id="snap">שמירת גרסה נוכחית</button></div><div id="snaps"></div>' +
       '<h3>אחר</h3><div class="row"><button id="sample">טעינת נתוני דוגמה</button><button class="danger" id="reset">מחיקת כל הנתונים</button><button class="danger" id="clearSes">מחיקת כל המפגשים שאינם נעולים</button></div></div>';
 
@@ -408,7 +408,7 @@
         const sel = $$('[data-row]').filter(c => c.checked).map(c => body[Number(c.dataset.row)]);
         const recs = sel.map(r => { const o = {}; Object.entries(st.map).forEach(([i, f]) => { if (f) o[f] = (o[f] ? o[f] + ' ' : '') + (r[i] || '').trim(); }); return o; });
         const res = doImport(st.entity, recs, { update: $('#upd').checked, classId: st.classId });
-        $('#impMsg').innerHTML = '<div class="alert ok">✔ ' + esc(res) + '</div>';
+        $('#impMsg').innerHTML = '<div class="alert ok">' + esc(res) + '</div>';
         st.sheets = null; $('#impBody').innerHTML = ''; window.scrollTo(0, 0);
       };
     }
