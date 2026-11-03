@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>שיבוץ – מערכת שעות חכמה</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🗓️ <b>שיבוץ</b> <span id="instName" class="muted"></span></div>
+    <div class="top-actions">
+      <button id="btnUndo" title="ביטול (Ctrl+Z)">↶ ביטול</button>
+      <button id="btnRedo" title="שחזור (Ctrl+Y)">↷ שחזור</button>
+      <button id="btnBackup" title="הורדת קובץ גיבוי של כל הנתונים">💾 גיבוי</button>
+      <span id="saveState" class="muted small">נשמר אוטומטית בדפדפן</span>
+    </div>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" id="nav">
+      <a data-page="dashboard">🏠 לוח בקרה</a>
+      <div class="nav-sec">נתונים</div>
+      <a data-page="students">🧒 תלמידים</a>
+      <a data-page="staff">👩‍🏫 צוות ומטפלים</a>
+      <a data-page="classes">🏫 כיתות</a>
+      <a data-page="activities">📋 פעילויות ודרישות</a>
+      <a data-page="import">📥 ייבוא מקבצים</a>
+      <div class="nav-sec">שיבוץ</div>
+      <a data-page="board">🧩 לוח שיבוץ</a>
+      <a data-page="check">🔎 בדיקת זמן / שינוי</a>
+      <a data-page="recs">💡 המלצות טיפול</a>
+      <a data-page="calendar">📆 שינויים ואירועים</a>
+      <div class="nav-sec">הפקה</div>
+      <a data-page="export">🖨️ הפקת מערכות</a>
+      <a data-page="reports">📊 דוחות</a>
+      <div class="nav-sec">מערכת</div>
+      <a data-page="settings">⚙️ הגדרות</a>
+      <a data-page="help">❓ מדריך</a>
+    </nav>
+    <main id="main"></main>
+  </div>
+  <div id="modalRoot"></div>
+  <div id="toast" class="toast"></div>
+
+  <script src="js/vendor/xlsx.full.min.js"></script>
+  <script src="js/vendor/jszip.min.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/importer.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/pages-data.js"></script>
+  <script src="js/pages-board.js"></script>
+  <script src="js/pages-tools.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

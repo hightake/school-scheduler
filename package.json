@@ -1,0 +1,11 @@
+{
+  "name": "shibutz-timetable",
+  "version": "1.0.0",
+  "description": "מערכת לבניית מערכות שעות חכמה למוסדות חינוך (חינוך מיוחד ושילוב)",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "start": "python3 -m http.server 8080"
+  },
+  "license": "UNLICENSED"
+}
